@@ -1,0 +1,41 @@
+{
+  "name": "mailsplit",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "concurrently \"bun run dev:server\" \"bun run dev:client\"",
+    "dev:server": "bun --watch src/server/index.ts",
+    "dev:client": "vite",
+    "build": "vite build && bun run build:server",
+    "build:server": "bun build src/server/index.ts --outdir dist/server --target bun",
+    "db:push": "drizzle-kit push",
+    "db:seed": "bun src/server/db/seed.ts",
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "lint": "eslint src/",
+    "lint:file": "eslint"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.13.8",
+    "drizzle-orm": "^0.38.0",
+    "hono": "^4.7.0",
+    "nanoid": "^5.0.9",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-router-dom": "^7.1.0",
+    "recharts": "^2.15.0",
+    "zod": "^3.24.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "@vitejs/plugin-react": "^4.3.0",
+    "autoprefixer": "^10.4.20",
+    "concurrently": "^9.1.0",
+    "drizzle-kit": "^0.30.0",
+    "postcss": "^8.4.49",
+    "tailwindcss": "^3.4.17",
+    "typescript": "^5.7.0",
+    "vite": "^6.0.0"
+  }
+}

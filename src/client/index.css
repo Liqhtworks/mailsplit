@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --font-display: "Bitter", serif;
+  --font-body: "Inter", system-ui, sans-serif;
+}
+
+body {
+  font-family: var(--font-body);
+  background: #FDFDFC;
+  color: #1B1B18;
+  margin: 0;
+}
+
+h1, h2, h3 {
+  font-family: var(--font-display);
+}
