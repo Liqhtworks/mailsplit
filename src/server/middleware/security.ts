@@ -52,7 +52,10 @@ export async function csrfProtection(c: Context, next: Next) {
   const referer = c.req.header("Referer");
 
   if (origin || referer) {
-    const allowedOrigins = ["http://localhost:5173", "http://localhost:5174", "http://localhost:3456"];
+    const allowedOrigins = [
+      "http://localhost:5173", "http://localhost:5174", "http://localhost:3456",
+      ...(process.env.RAILWAY_PUBLIC_DOMAIN ? [`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`] : []),
+    ];
     const requestOrigin = origin || new URL(referer!).origin;
     if (!allowedOrigins.includes(requestOrigin)) {
       return c.json({ error: "CSRF validation failed" }, 403);

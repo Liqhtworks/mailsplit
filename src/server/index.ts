@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import { cors } from "hono/cors";
+import { serveStatic } from "hono/bun";
 import { logger } from "hono/logger";
 import testRoutes from "./routes/tests";
 import segmentRoutes from "./routes/segments";
@@ -16,10 +17,17 @@ import { db, sqlite } from "./db";
 
 const app = new Hono();
 
+const allowedOrigins = [
+  "http://localhost:5173",
+  "http://localhost:5174",
+  "http://localhost:3456",
+  ...(process.env.RAILWAY_PUBLIC_DOMAIN ? [`https://${process.env.RAILWAY_PUBLIC_DOMAIN}`] : []),
+];
+
 // Global middleware
 app.use("*", logger());
 app.use("*", securityHeaders);
-app.use("/api/*", cors({ origin: ["http://localhost:5173", "http://localhost:5174"], credentials: true }));
+app.use("/api/*", cors({ origin: allowedOrigins, credentials: true }));
 app.use("/api/*", maxBodySize(10 * 1024 * 1024)); // 10MB
 app.use("/api/*", csrfProtection);
 app.use("/api/*", authMiddleware);
@@ -49,6 +57,13 @@ app.route("/api/workspace", workspaceRoutes);
 app.route("/api/keys", apikeyRoutes);
 app.route("/api/templates", templateRoutes);
 app.route("/api/integrations", integrationRoutes);
+
+// Serve static frontend assets
+app.use("/assets/*", serveStatic({ root: "./dist/client" }));
+app.get("/favicon.ico", serveStatic({ root: "./dist/client", path: "/favicon.ico" }));
+
+// SPA fallback — serve index.html for all non-API routes
+app.get("*", serveStatic({ root: "./dist/client", path: "/index.html" }));
 
 // Initialize database tables
 function initDb() {
